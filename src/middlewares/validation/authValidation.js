@@ -27,14 +27,49 @@ class AuthValidation {
             .email()
             .trim()
             .min(3)
-            .max(20)
+            .max(50)
             .required()
             .messages({
               "string.base": "Email alanı normal metin olmalıdır.",
               "string.empty": "Email alanı boş olamaz.",
               "string.email": "Lütfen geçerli bir mail adresi girin",
               "string.min": "Email alanı en az 3 karakter olmalıdır.",
-              "string.max": "Emailm alanı en fazla 20 karakter olmalıdır.",
+              "string.max": "Email alanı en fazla 50 karakter olmalıdır.",
+              "string.required": "Email alanı zorunludur.",
+            }),
+          password: joi.string().trim().min(6).max(20).required().messages({
+            "string.base": "Parola alanı normal metin olmalıdır.",
+            "string.empty": "Parola alanı boş olamaz.",
+            "string.min": "Parola alanı en az 6 karakter olmalıdır.",
+            "string.max": "Parola alanı en fazla 20 karakter olmalıdır.",
+            "string.required": "Parola alanı zorunludur.",
+          }),
+        })
+        .validateAsync(req.body);
+    } catch (error) {
+      if (error.details && error?.details[0].message) {
+        throw new APIError(error.details[0].message, 400);
+      } else throw new APIError("Lütfen Validasyon kurallarına uyunuz", 400);
+    }
+    next();
+  };
+  static login = async (req, res, next) => {
+    try {
+      await joi
+        .object({
+          email: joi
+            .string()
+            .email()
+            .trim()
+            .min(3)
+            .max(50)
+            .required()
+            .messages({
+              "string.base": "Email alanı normal metin olmalıdır.",
+              "string.empty": "Email alanı boş olamaz.",
+              "string.email": "Lütfen geçerli bir mail adresi girin",
+              "string.min": "Email alanı en az 3 karakter olmalıdır.",
+              "string.max": "Email alanı en fazla 50 karakter olmalıdır.",
               "string.required": "Email alanı zorunludur.",
             }),
           password: joi.string().trim().min(6).max(20).required().messages({

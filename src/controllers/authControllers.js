@@ -2,8 +2,23 @@ const user = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const APIError = require("../utils/error");
 const Response = require("../utils/response");
+const { createToken } = require("../middlewares/auth");
+
 const login = async (req, res) => {
-  return res.json(req.body);
+  const { email, password } = req.body;
+  const loginUser = await user.findOne({ email });
+  if (!loginUser)
+    throw new APIError(
+      "Mail adresi veya parola hatalı, lütfen tekrar deneyin.",
+      401
+    );
+  const comparePassword = await bcrypt.compare(password, loginUser.password);
+  if (!comparePassword)
+    throw new APIError(
+      "Mail adresi veya parola hatalı, lütfen tekrar deneyin.",
+      401
+    );
+  createToken(loginUser, res);
 };
 const register = async (req, res) => {
   const { email } = req.body;
@@ -25,4 +40,5 @@ const register = async (req, res) => {
       (err) => new APIError("Kayıt başarısız, lütfen tekrar deneyin", 400)
     );
 };
+
 module.exports = { login, register };
