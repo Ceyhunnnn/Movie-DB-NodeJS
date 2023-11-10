@@ -10,14 +10,19 @@ const register = async (req, res) => {
   const userCheck = await user.findOne({ email });
 
   if (userCheck) {
-    throw new APIError("Already email", 401);
+    throw new APIError(
+      "Böyle bir email adresi mevcut, lütfen farklı bir email adresi ile deneyiniz",
+      401
+    );
   }
   req.body.password = await bcrypt.hash(req.body.password, 10);
 
   const newUser = new user(req.body);
   await newUser
     .save()
-    .then((data) => new Response(data, "Success saved").created(res))
-    .catch((err) => new APIError("Save not success", 400));
+    .then((data) => new Response(data, "Kayıt başarılı").created(res))
+    .catch(
+      (err) => new APIError("Kayıt başarısız, lütfen tekrar deneyin", 400)
+    );
 };
 module.exports = { login, register };

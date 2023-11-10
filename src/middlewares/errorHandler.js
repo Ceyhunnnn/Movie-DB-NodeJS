@@ -9,7 +9,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   }
   return res.status(500).json({
     success: false,
-    message: "Api check please!",
+    message: "Servis tarafından kaynaklı bir hata oluştu",
   });
 };
 
