@@ -40,5 +40,8 @@ const register = async (req, res) => {
       (err) => new APIError("Kayıt başarısız, lütfen tekrar deneyin", 400)
     );
 };
+const me = async (req, res) => {
+  return new Response(req.user, "Basarili").success(res);
+};
 
-module.exports = { login, register };
+module.exports = { login, register, me };
