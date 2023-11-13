@@ -49,7 +49,12 @@ const me = async (req, res) => {
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
   const userInfo = await user.findOne({ email }).select(" name surname email");
-  if (!userInfo) return new APIError("Geçersiz kullanıcı", 400);
+  if (!userInfo) {
+    throw new APIError(
+      "Geçersiz mail adresi, lütfen geçerli bir mail adresi girin",
+      400
+    );
+  }
   const resetCode = crypto.randomBytes(3).toString("hex");
   await sendEmail({
     from: process.env.EMAIL_USER,

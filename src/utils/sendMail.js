@@ -1,5 +1,4 @@
 const nodeMailer = require("nodemailer");
-
 const sendEmail = async (mailOptions) => {
   const transporter = nodeMailer.createTransport({
     host: "smtp-mail.outlook.com",
@@ -13,7 +12,7 @@ const sendEmail = async (mailOptions) => {
 
   transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
-      console.log("hata cikti : ", err);
+      console.log("err : ", err);
     }
     console.log("info : ", info);
     return true;
