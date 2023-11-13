@@ -1,4 +1,5 @@
 const rateLimit = require("express-rate-limit");
+const allowList = ["::1"];
 
 const apiLimiter = rateLimit({
   windowMS: 15 * 60 * 1000,
@@ -10,6 +11,7 @@ const apiLimiter = rateLimit({
     success: false,
     message: "Çok fazla istekte bulundunuz !",
   },
+  skip: (req, res) => allowList.includes(req.ip),
   standardHeaders: true,
   legacyHeaders: false,
 });
