@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 const APIError = require("../utils/error");
 const Response = require("../utils/response");
 const { createToken } = require("../middlewares/auth");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendMail");
+const moment = require("moment");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -43,5 +46,30 @@ const register = async (req, res) => {
 const me = async (req, res) => {
   return new Response(req.user, "Basarili").success(res);
 };
-
-module.exports = { login, register, me };
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  const userInfo = await user.findOne({ email }).select(" name surname email");
+  if (!userInfo) return new APIError("Geçersiz kullanıcı", 400);
+  const resetCode = crypto.randomBytes(3).toString("hex");
+  await sendEmail({
+    from: process.env.EMAIL_USER,
+    to: userInfo.email,
+    subject: "Şifre sıfırlama",
+    text: `Şifre sıfırlama kodunuz ${resetCode}`,
+  });
+  await user.updateOne(
+    { email },
+    {
+      reset: {
+        code: resetCode,
+        time: moment(new Date())
+          .add(15, "minute")
+          .format("YYYY-MMM-DD HH:mm:ss"),
+      },
+    }
+  );
+  return new Response(true, "Lütfen mail adresinizi kontrol ediniz").success(
+    res
+  );
+};
+module.exports = { login, register, me, forgetPassword };
