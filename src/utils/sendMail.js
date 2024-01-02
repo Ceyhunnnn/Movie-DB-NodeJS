@@ -20,3 +20,4 @@ const sendEmail = async (mailOptions) => {
 };
 
 module.exports = sendEmail;
+//this is example commend 2
